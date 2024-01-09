@@ -32,7 +32,7 @@ export class SignUpDTO implements Omit<IUser, 'id'> {
 
   @IsNotEmpty()
   @IsDateString()
-  birthdate: Date;
+  birthDate: Date;
 
   sex?: ESex;
 }

@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AuthGuard } from './auth/guard';
 import { APP_GUARD } from '@nestjs/core';
+import { DataSource } from 'typeorm';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { APP_GUARD } from '@nestjs/core';
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
+        entities: [User],
         synchronize: true,
       }),
       inject: [ConfigService],

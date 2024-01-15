@@ -7,8 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AuthGuard } from './auth/guard';
 import { APP_GUARD } from '@nestjs/core';
-import { DataSource } from 'typeorm';
 import { User } from './users/entities/user.entity';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [

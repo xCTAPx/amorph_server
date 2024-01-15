@@ -4,6 +4,7 @@ import { UserDTO } from './types';
 import { IUser } from '../users/types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { MailService } from '@/mail/mail.service';
 
 const SALT_ROUNDS = 10;
 
@@ -12,6 +13,7 @@ export class AuthService {
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
+    private mailSerice: MailService,
   ) {}
 
   async signIn(email: string, pass: string) {
@@ -23,6 +25,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
 
     const payload = { sub: user.id, email: user.email };
+    await this.mailSerice.sendRestorePasswordLink(user, '');
     return { access_token: await this.jwtService.signAsync(payload) };
   }
 

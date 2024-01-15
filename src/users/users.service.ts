@@ -9,9 +9,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
-  private readonly users = [];
 
-  async findOne(email: string): Promise<IUser | undefined> {
+  async findOne(email: string): Promise<User | undefined> {
     const existedUser = await this.usersRepository.findOne({
       where: {
         email,

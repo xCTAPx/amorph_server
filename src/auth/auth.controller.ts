@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDTO, SignUpDTO } from './types';
 import { PublicRoute } from 'src/Decorators/PublicRoute';
@@ -20,4 +28,16 @@ export class AuthController {
   signUp(@Body() signInDto: SignUpDTO) {
     return this.authService.signUp(signInDto);
   }
+
+  @PublicRoute()
+  @HttpCode(HttpStatus.OK)
+  @Get('confirm')
+  confirm(@Query() query: { token: string }) {
+    return this.authService.confirm(query.token);
+  }
+
+  @PublicRoute()
+  @HttpCode(HttpStatus.OK)
+  @Get('restore')
+  restore(@Query() token: string) {}
 }

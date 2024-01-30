@@ -5,6 +5,10 @@ import { IUser } from '../users/types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '@/mail/mail.service';
+import { prepareUser } from '@/utils/users';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const crypto = require('crypto');
 
 const SALT_ROUNDS = 10;
 
@@ -25,19 +29,27 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
 
     const payload = { sub: user.id, email: user.email };
-    await this.mailSerice.sendRestorePasswordLink(user, '');
     return { access_token: await this.jwtService.signAsync(payload) };
   }
 
   async signUp(user: Omit<IUser, 'id'>): Promise<UserDTO> {
     const hashedPassword = await bcrypt.hash(user.password, SALT_ROUNDS);
+    const confirmationToken = crypto.randomBytes(32).toString('hex');
 
-    const newUser = await this.userService.addOne({
-      ...user,
-      password: hashedPassword,
-      id: Math.floor(Math.random() * (1000 - 2) + 1),
-    });
+    const newUser = await this.userService.addOne(
+      {
+        ...user,
+        password: hashedPassword,
+      },
+      confirmationToken,
+    );
 
-    return newUser;
+    await this.mailSerice.sendConfirmationEmailLink(newUser, confirmationToken);
+
+    return prepareUser(newUser);
+  }
+
+  async confirm(token: string): Promise<undefined> {
+    await this.userService.confirm(token);
   }
 }

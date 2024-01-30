@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ESex } from '../types';
@@ -32,9 +33,18 @@ export class User {
   @Column()
   phoneNumber: string;
 
-  @Column({ nullable: true })
-  sex: ESex;
+  @Column({ default: false })
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ nullable: true })
+  sex: ESex;
+
+  @Column({ nullable: true })
+  confirmationToken: string;
+
+  @Column({ nullable: true })
+  restoreToken: string;
 }

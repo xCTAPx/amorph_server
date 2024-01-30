@@ -22,7 +22,10 @@ export class UsersService {
     return existedUser;
   }
 
-  async addOne(user: IUser): Promise<IUser> {
+  async addOne(
+    user: Omit<IUser, 'id'>,
+    confirmationToken: string,
+  ): Promise<IUser> {
     const existedUser = await this.usersRepository.findOne({
       where: {
         email: user.email,
@@ -41,6 +44,7 @@ export class UsersService {
       birthDate: user.birthDate,
       phoneNumber: user.phoneNumber,
       sex: user.sex,
+      confirmationToken,
     });
 
     return newUser;
@@ -49,5 +53,27 @@ export class UsersService {
   async getAll(): Promise<IUser[]> {
     const users = await this.usersRepository.find();
     return users;
+  }
+
+  async confirm(token: string): Promise<undefined> {
+    const user = await this.usersRepository.findOne({
+      where: {
+        confirmationToken: token,
+        isActive: false,
+      },
+    });
+
+    if (!user)
+      throw new BadRequestException(
+        `Token is invalid or user has been activated before`,
+      );
+
+    await this.usersRepository.update(
+      {
+        confirmationToken: token,
+        isActive: false,
+      },
+      { isActive: true, confirmationToken: null },
+    );
   }
 }

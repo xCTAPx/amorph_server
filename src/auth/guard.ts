@@ -9,12 +9,14 @@ import { jwtConstants } from './constants';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '@Decorators/PublicRoute';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
+    private userService: UsersService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -37,6 +39,10 @@ export class AuthGuard implements CanActivate {
       });
 
       request['user'] = payload;
+      const user = await this.userService.findOne(payload.email);
+
+      if (!user.isActive)
+        throw new UnauthorizedException('Email has not been confirmed');
     } catch {
       throw new UnauthorizedException();
     }

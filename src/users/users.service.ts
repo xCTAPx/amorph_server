@@ -76,4 +76,49 @@ export class UsersService {
       { isActive: true, confirmationToken: null },
     );
   }
+
+  async requestRestore(email: string, token: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!user)
+      throw new BadRequestException(`User with email ${email} not found`);
+
+    await this.usersRepository.update(
+      {
+        email,
+      },
+      { restoreToken: token },
+    );
+
+    return user;
+  }
+
+  async restore(
+    email: string,
+    password: string,
+    token: string,
+  ): Promise<undefined> {
+    const user = await this.usersRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!user)
+      throw new BadRequestException(`User with email ${email} not found`);
+
+    if (user.restoreToken !== token)
+      throw new BadRequestException('Invalid token');
+
+    await this.usersRepository.update(
+      {
+        email,
+      },
+      { restoreToken: null, password },
+    );
+  }
 }

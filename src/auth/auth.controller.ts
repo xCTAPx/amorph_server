@@ -38,6 +38,15 @@ export class AuthController {
 
   @PublicRoute()
   @HttpCode(HttpStatus.OK)
-  @Get('restore')
-  restore(@Query() token: string) {}
+  @Post('requestRestore')
+  requestRestore(@Body() requestRestoreDTO: Pick<SignInDTO, 'email'>) {
+    this.authService.requestRestore(requestRestoreDTO.email);
+  }
+
+  @PublicRoute()
+  @HttpCode(HttpStatus.OK)
+  @Post('restore')
+  restore(@Query() query: { token: string }, @Body() SignInDTO) {
+    this.authService.restore(SignInDTO, query.token);
+  }
 }

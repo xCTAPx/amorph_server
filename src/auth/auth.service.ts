@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { UserDTO } from './types';
+import { SignInDTO, UserDTO } from './types';
 import { IUser } from '../users/types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -28,6 +28,9 @@ export class AuthService {
     if (!isValidCredentials)
       throw new UnauthorizedException('Invalid password');
 
+    if (user.confirmationToken)
+      throw new UnauthorizedException('Your email is not confirmed');
+
     const payload = { sub: user.id, email: user.email };
     return { access_token: await this.jwtService.signAsync(payload) };
   }
@@ -51,5 +54,19 @@ export class AuthService {
 
   async confirm(token: string): Promise<undefined> {
     await this.userService.confirm(token);
+  }
+
+  async requestRestore(email: string): Promise<undefined> {
+    const restoreToken = crypto.randomBytes(32).toString('hex');
+
+    const user = await this.userService.requestRestore(email, restoreToken);
+
+    await this.mailSerice.sendRestorePasswordLink(user, restoreToken);
+  }
+
+  async restore(signInDto: SignInDTO, token: string): Promise<undefined> {
+    const hashedPassword = await bcrypt.hash(signInDto.password, SALT_ROUNDS);
+
+    await this.userService.restore(signInDto.email, hashedPassword, token);
   }
 }

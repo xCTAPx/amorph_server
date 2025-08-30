@@ -1,4 +1,7 @@
+
 [build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 builder = "nixpacks"
 buildCommand = "npm run build"
 startCommand = "npm run start:prod"
@@ -9,3 +12,6 @@ NPM_CONFIG_USER_AGENT = "npm"
 DISABLE_COREPACK = "1"
 USE_NPM = "true"
 NODE_ENV = "production"
+
+[deploy]
+startCommand = "npm run start:prod"

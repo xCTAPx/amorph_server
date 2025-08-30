@@ -4,6 +4,7 @@ cmds = [
     "apt-get install -y nodejs"
 ]
 
+# Не обновляем npm, используем версию из образа
 [phases.install]
 cmds = ["npm ci --only=production"]
 

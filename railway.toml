@@ -1,9 +1,0 @@
-[build]
-builder = "nixpacks"
-buildCommand = "npm run build"
-startCommand = "npm run start:prod"
-installCommand = "npm install"
-
-[build.environment]
-NPM_CONFIG_USER_AGENT = "npm"
-NPM_CONFIG_PRODUCTION = "false"

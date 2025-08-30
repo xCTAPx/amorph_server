@@ -6,4 +6,5 @@ installCommand = "npm install"
 
 [build.environment]
 NPM_CONFIG_USER_AGENT = "npm"
-NPM_CONFIG_PRODUCTION = "false"
+DISABLE_COREPACK = "1"
+USE_NPM = "true"

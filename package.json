@@ -83,5 +83,5 @@
       "@decorators": "src/Decorators"
     }
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "npm@10.2.5"
 }

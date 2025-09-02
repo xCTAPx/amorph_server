@@ -8,7 +8,6 @@ import { UsersModule } from './users/users.module';
 import { AuthGuard } from './auth/guard';
 import { APP_GUARD } from '@nestjs/core';
 import { User } from './users/entities/user.entity';
-import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -24,6 +23,9 @@ import { MailModule } from './mail/mail.module';
         database: configService.get('DB_NAME'),
         entities: [User],
         synchronize: true,
+        ssl: {
+          rejectUnauthorized: false, // важно для Railway
+        },
       }),
       inject: [ConfigService],
     }),

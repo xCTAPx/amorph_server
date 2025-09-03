@@ -14,12 +14,12 @@ import { User } from './users/entities/user.entity';
     ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: process.env.NODE_ENV === 'production' }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        const host = configService.get('DB_HOST');
-        const port = configService.get('DB_PORT');
-        const username = configService.get('DB_USER');
-        const password = configService.get('DB_PASSWORD');
-        const database = configService.get('DB_NAME');
+      useFactory: () => {
+        const host = process.env.DB_HOST;
+        const port = +process.env.DB_PORT;
+        const username = process.env.DB_USER;
+        const password = process.env.DB_PASSWORD;
+        const database = process.env.DB_NAME;
 
         console.log({ isProduction: process.env.NODE_ENV === 'production', host, port, username, password, database });
 

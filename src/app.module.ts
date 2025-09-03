@@ -23,11 +23,8 @@ const isProduction = process.env.NODE_ENV === 'production'
         const password = process.env.DB_PASSWORD;
         const database = process.env.DB_NAME;
 
-        console.log({ isProduction: process.env.NODE_ENV === 'production', host, port, username, password, database });
-
         return ({
         type: 'postgres',
-        // url: configService.get('DATABASE_URL'),
         host,
         port,
         username,

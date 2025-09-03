@@ -13,7 +13,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: isProduction }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: () => {
@@ -27,6 +27,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
         return ({
         type: 'postgres',
+        // url: configService.get('DATABASE_URL'),
         host,
         port,
         username,
@@ -34,8 +35,13 @@ const isProduction = process.env.NODE_ENV === 'production'
         database,
         entities: [User],
         synchronize: !isProduction,
-        ssl: {
+        ssl: isProduction ? {
           rejectUnauthorized: false, // важно для Railway
+        } : false,
+        extra: {
+          ssl: isProduction ? {
+            rejectUnauthorized: false, // важно для Railway
+          } : false,
         },
       });
     },

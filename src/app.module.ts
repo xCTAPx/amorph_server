@@ -14,20 +14,30 @@ import { User } from './users/entities/user.entity';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => {
+        const host = configService.get('DB_HOST');
+        const port = configService.get('DB_PORT');
+        const username = configService.get('DB_USER');
+        const password = configService.get('DB_PASSWORD');
+        const database = configService.get('DB_NAME');
+
+        console.log({ host, port, username, password, database });
+
+        return ({
         type: 'postgres',
         // url: configService.get('DATABASE_URL'),
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USER'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
+        host,
+        port,
+        username,
+        password,
+        database,
         entities: [User],
         // synchronize: true,
         ssl: {
           rejectUnauthorized: false, // важно для Railway
         },
-      }),
+      });
+    },
       inject: [ConfigService],
     }),
     AuthModule,

@@ -9,9 +9,11 @@ import { AuthGuard } from './auth/guard';
 import { APP_GUARD } from '@nestjs/core';
 import { User } from './users/entities/user.entity';
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: process.env.NODE_ENV === 'production' }),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: () => {
@@ -25,14 +27,13 @@ import { User } from './users/entities/user.entity';
 
         return ({
         type: 'postgres',
-        // url: configService.get('DATABASE_URL'),
         host,
         port,
         username,
         password,
         database,
         entities: [User],
-        // synchronize: true,
+        synchronize: !isProduction,
         ssl: {
           rejectUnauthorized: false, // важно для Railway
         },

@@ -21,7 +21,7 @@ import { User } from './users/entities/user.entity';
         const password = configService.get('DB_PASSWORD');
         const database = configService.get('DB_NAME');
 
-        console.log({ host, port, username, password, database });
+        console.log({ isProduction: process.env.NODE_ENV === 'production', host, port, username, password, database });
 
         return ({
         type: 'postgres',

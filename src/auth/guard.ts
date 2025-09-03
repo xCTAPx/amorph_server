@@ -43,7 +43,7 @@ export class AuthGuard implements CanActivate {
       request['user'] = payload;
       const user = await this.userService.findOne(payload.email);
 
-      if (!user.isActive)
+      if (!user.is_active)
         throw new UnauthorizedException('Email has not been confirmed');
     } catch {
       throw new UnauthorizedException();

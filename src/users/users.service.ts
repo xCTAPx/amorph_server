@@ -3,6 +3,7 @@ import { IUser } from './types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { transformDbUserToIUser } from '@/utils/users';
 
 @Injectable()
 export class UsersService {
@@ -38,28 +39,28 @@ export class UsersService {
     const newUser = await this.usersRepository.save({
       email: user.email,
       password: user.password,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      first_name: user.firstName,
+      last_name: user.lastName,
       age: user.age,
-      birthDate: user.birthDate,
-      phoneNumber: user.phoneNumber,
+      birth_date: user.birthDate,
+      phone_number: user.phoneNumber,
       sex: user.sex,
-      confirmationToken,
+      confirmation_token: confirmationToken,
     });
 
-    return newUser;
+    return transformDbUserToIUser(newUser);
   }
 
   async getAll(): Promise<IUser[]> {
     const users = await this.usersRepository.find();
-    return users;
+    return users.map(transformDbUserToIUser);
   }
 
   async confirm(token: string): Promise<undefined> {
     const user = await this.usersRepository.findOne({
       where: {
-        confirmationToken: token,
-        isActive: false,
+        confirmation_token: token,
+        is_active: false,
       },
     });
 
@@ -70,10 +71,10 @@ export class UsersService {
 
     await this.usersRepository.update(
       {
-        confirmationToken: token,
-        isActive: false,
+        confirmation_token: token,
+        is_active: false,
       },
-      { isActive: true, confirmationToken: null },
+      { is_active: true, confirmation_token: null },
     );
   }
 
@@ -91,7 +92,7 @@ export class UsersService {
       {
         email,
       },
-      { restoreToken: token },
+      { restore_token: token },
     );
 
     return user;
@@ -111,14 +112,14 @@ export class UsersService {
     if (!user)
       throw new BadRequestException(`User with email ${email} not found`);
 
-    if (user.restoreToken !== token)
+    if (user.restore_token !== token)
       throw new BadRequestException('Invalid token');
 
     await this.usersRepository.update(
       {
         email,
       },
-      { restoreToken: null, password },
+      { restore_token: null, password },
     );
   }
 }

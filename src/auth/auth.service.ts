@@ -5,7 +5,7 @@ import { IUser } from '../users/types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '@/mail/mail.service';
-import { prepareUser } from '@/utils/users';
+import { prepareUser, transformDbUserToIUser } from '@/utils/users';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const crypto = require('crypto');
@@ -28,7 +28,7 @@ export class AuthService {
     if (!isValidCredentials)
       throw new UnauthorizedException('Invalid password');
 
-    if (user.confirmationToken)
+    if (user.confirmation_token)
       throw new UnauthorizedException('Your email is not confirmed');
 
     const payload = { sub: user.id, email: user.email };
@@ -61,7 +61,7 @@ export class AuthService {
 
     const user = await this.userService.requestRestore(email, restoreToken);
 
-    await this.mailSerice.sendRestorePasswordLink(user, restoreToken);
+    await this.mailSerice.sendRestorePasswordLink(transformDbUserToIUser(user), restoreToken);
   }
 
   async restore(signInDto: SignInDTO, token: string): Promise<undefined> {

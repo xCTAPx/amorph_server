@@ -19,32 +19,32 @@ export class User {
   password: string;
 
   @Column()
-  firstName: string;
+  first_name: string;
 
   @Column()
-  lastName: string;
+  last_name: string;
 
   @Column()
   age: number;
 
   @Column()
-  birthDate: Date;
+  birth_date: Date;
 
   @Column()
-  phoneNumber: string;
+  phone_number: string;
 
   @Column({ default: false })
-  isActive: boolean;
+  is_active: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @Column({ nullable: true })
   sex: ESex;
 
   @Column({ nullable: true })
-  confirmationToken: string;
+  confirmation_token: string;
 
   @Column({ nullable: true })
-  restoreToken: string;
+  restore_token: string;
 }
